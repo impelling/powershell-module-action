@@ -42,14 +42,14 @@ Write-Host "- Building $ModuleName in $OutputPath"
 
 $ResolvedOutputPath = Join-Path -Path $ModuleDirectory.FullName -ChildPath $OutputPath
 if (-not (Test-Path $ResolvedOutputPath)) {
-    New-Item -Path $ResolvedOutputPath -ItemType Directory
+    New-Item -Path $ResolvedOutputPath -ItemType Directory | Out-Null
 }
 else {
     Remove-Item -Path $ResolvedOutputPath/* -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 Install-Module ModuleBuilder -Force
-Build-Module -Path $ModuleDirectory.FullName -OutputDirectory $OutputPath -Version $Version -UnversionedOutputDirectory
+Build-Module -Path $ModuleDirectory.FullName -OutputDirectory $OutputPath -UnversionedOutputDirectory
 
 if (-not $Publish) {
     Write-Host "Publishing disabled, skipping publish"
