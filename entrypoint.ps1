@@ -8,6 +8,13 @@ $OutputPath = $env:INPUT_RELATIVEOUTPUTPATH ? $env:INPUT_RELATIVEOUTPUTPATH : '.
 $Version = $env:INPUT_VERSION ? $env:INPUT_VERSION : '0.0.1-localonly'
 $Publish = $env:INPUT_PUBLISH ? $env:INPUT_PUBLISH : $false
 
+Write-Host "Working with inputs:"
+Write-Host "    - ModulePath: $ModulePath"
+Write-Host "    - PSGalleryKey: $($PSGalleryKey ? 'Provided' : 'Not provided')"
+Write-Host "    - OutputPath: $OutputPath"
+Write-Host "    - Version: $Version"
+Write-Host "    - Publish: $Publish"
+
 $ModuleDirectory = $null
 if ([string]::IsNullOrWhiteSpace($ModulePath)) {
     Write-Output "No module path provided, searching for module in repository"
@@ -15,21 +22,23 @@ if ([string]::IsNullOrWhiteSpace($ModulePath)) {
     # Get the first module in the repo, excluding all psd1 files in the root
 }
 else {
-    Write-Output "Module path provided, using module at $ModulePath"
     $SearchPath = $ModulePath
 }
 
 $ModuleDirectory = Get-ChildItem -Path $SearchPath -Recurse -Include *.psm1 | Select-Object -First 1 -ExpandProperty Directory
 
-$ModuleName = $ModuleDirectory | Split-Path -Leaf
+if (-not $ModuleDirectory) {
+    throw "No module found in $SearchPath"
+}
 
+$ModuleName = $ModuleDirectory | Split-Path -Leaf
 Write-Host "Processing module: $ModuleName"
 
 if ([string]::IsNullOrWhiteSpace($PSGalleryKey)) {
     throw "No API key provided"
 }
 
-Write-Host "Building $ModuleName in $OutputPath"
+Write-Host "- Building $ModuleName in $OutputPath"
 
 $ResolvedOutputPath = Join-Path -Path $ModuleDirectory.FullName -ChildPath $OutputPath
 if (-not (Test-Path $ResolvedOutputPath)) {
@@ -70,10 +79,15 @@ else {
     }
 }
 
-Write-Host "Updating module manifest"
-Update-ModuleManifest @ManifestSplat
+try {
+    Update-ModuleManifest @ManifestSplat
+}
+catch {
+    Write-Error "Failed to update module manifest"
+    throw $_.Exception.Message
+}
 
-Write-Host "Publishing $ModuleName to PowerShell Gallery"
+Write-Host "Publishing $ModuleName version $Version to PowerShell Gallery"
 
 try {
     Publish-Module -Path "$OutputPath\$ModuleName" -NuGetApiKey $PSGalleryKey -Force
