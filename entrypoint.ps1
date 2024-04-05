@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 
 
 $ModulePath = $env:INPUT_MODULEPATH
-$PSGalleryKey = $env:INPUT_PSGalleryKey
+$PSGalleryKey = $env:INPUT_PSGALLERYKEY
 $OutputPath = $env:INPUT_RELATIVEOUTPUTPATH ? $env:INPUT_RELATIVEOUTPUTPATH : '../Output'
 $Version = $env:INPUT_VERSION ? $env:INPUT_VERSION : '0.0.1-localonly'
 $Publish = $env:INPUT_PUBLISH ? $env:INPUT_PUBLISH : $false
