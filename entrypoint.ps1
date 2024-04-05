@@ -62,7 +62,7 @@ if ($Version -like '*-localonly') {
 }
 
 $ManifestSplat = @{
-Path = "$OutputPath\$ModuleName\$ModuleName.psd1"
+    Path = "$ResolvedOutputPath\$ModuleName\$ModuleName.psd1"
 }
 
 if ($Version -like "*-*") {
