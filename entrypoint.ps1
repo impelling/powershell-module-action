@@ -83,7 +83,8 @@ try {
     Update-ModuleManifest @ManifestSplat
 }
 catch {
-    Write-Error "Failed to update module manifest"
+    Write-Warning "Failed to update module manifest"
+    $ManifestSplat
     throw $_.Exception.Message
 }
 
@@ -94,6 +95,6 @@ try {
     Write-Host "$ModuleName published to PowerShell Gallery"
 }
 catch {
-    Write-Error "Failed to publish $ModuleName to PowerShell Gallery"
+    Write-Warning "Failed to publish $ModuleName to PowerShell Gallery"
     throw $_.Exception.Message
 }
