@@ -91,7 +91,7 @@ catch {
 Write-Host "Publishing $ModuleName version $Version to PowerShell Gallery"
 
 try {
-    Publish-Module -Path "$OutputPath\$ModuleName" -NuGetApiKey $PSGalleryKey -Force
+    Publish-Module -Path "$ResolvedOutputPath\$ModuleName" -NuGetApiKey $PSGalleryKey -Force
     Write-Host "$ModuleName published to PowerShell Gallery"
 }
 catch {
