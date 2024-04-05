@@ -1,0 +1,31 @@
+name: PowerShell Module Action
+description: Builds a Powershell module, updates metadata, and then publishes the result to the PowerShell Gallery.
+inputs:
+  PSGalleryKey:
+    description: The NuGet API Key for PowerShell Gallery.
+    required: true
+  ModulePath:
+    description: The path to the module directory to publish. The first directory that contains a .psm1 will be published if not provided.
+    required: false
+  RelativeOutputPath:
+    description: The path to the output directory, relative to the manifest file. If not provided, the module will be published to the ../Output directory relative to the manifest.
+    required: false
+  Version:
+    description: The version of the module to publish. If not provided, the version will be read from the module manifest.
+    required: false
+  Publish:
+    description: Whether or not to publish the module to the PowerShell Gallery. If not provided, the module will not be published.
+    required: false
+
+outputs:
+  successfullyPublished: # id of output
+    description: Whether or not the publish command was successful
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.PSGalleryKey }}
+    - ${{ inputs.ModulePath }}
+    - ${{ inputs.RelativeOutputPath }}
+    - ${{ inputs.Version }}
+    - ${{ inputs.Publish }}
